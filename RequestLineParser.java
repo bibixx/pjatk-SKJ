@@ -12,19 +12,29 @@ public class RequestLineParser {
 
   private String host;
 
+  private String path;
+
   private int port;
 
   private boolean isHttps;
 
-  public RequestLineParser(InputStream inputStream) throws IOException {
-    String requestLine = "";
+  public RequestLineParser(InputStream inputStream) throws IOException, EndOfRequestException {
+    String requestLine = null;
     int b;
     while ((b = inputStream.read()) != -1) {
+      if (requestLine == null) {
+        requestLine = "";
+      }
+
       requestLine += (char)b;
 
       if (requestLine.endsWith("\r\n")) {
         break;
       }
+    }
+
+    if (requestLine == null) {
+      throw new EndOfRequestException();
     }
 
     requestLine = requestLine.trim();
@@ -61,6 +71,13 @@ public class RequestLineParser {
       } catch (NumberFormatException e) {
         this.port = 80;
       }
+
+      String path = matcher.group(4);
+      if (path != null) {
+        this.path = matcher.group(4);
+      } else {
+        this.path = null;
+      }
     }
   }
 
@@ -78,6 +95,10 @@ public class RequestLineParser {
 
   public String getHost() {
     return this.host;
+  }
+
+  public String getPath() {
+    return this.path;
   }
 
   public int getPort() {

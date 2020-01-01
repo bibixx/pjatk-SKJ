@@ -37,10 +37,13 @@ public class Connection {
       final InputStream inFromServer = serverSocket.getInputStream();
       final OutputStream outToServer = serverSocket.getOutputStream();
 
+      LastRequest lastRequest = new LastRequest();
+
       Thread clientToServerCommunicationThread = new ClientToServerCommunication(
         inFromClient,
         outToServer,
-        requestLineParser
+        requestLineParser,
+        lastRequest
       );
 
       Thread serverToClientCommunication = new ServerToClientCommunication(
@@ -55,13 +58,14 @@ public class Connection {
           catch(IOException e) {
             e.printStackTrace();
           }
-        }
+        },
+        lastRequest
       );
 
       serverToClientCommunication.start();
       clientToServerCommunicationThread.start();
-    }
-    catch (IOException e) {
+    } catch (EndOfRequestException e) {
+    } catch (IOException e) {
       System.err.println(e);
     }
   }
