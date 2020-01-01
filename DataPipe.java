@@ -4,10 +4,21 @@ import java.io.OutputStream;
 
 public class DataPipe {
   public DataPipe(InputStream inStream, OutputStream outStream) throws IOException {
+    OutputStream[] outStreams = { outStream };
+    this.pipe(inStream, outStreams);
+  }
+
+  public DataPipe(InputStream inStream, OutputStream[] outStreams) throws IOException {
+    this.pipe(inStream, outStreams);
+  }
+
+  private void pipe(InputStream inStream, OutputStream[] outStreams) throws IOException {
     byte[] buffer = new byte[4096];
     int read_bytes;
     while ((read_bytes = inStream.read(buffer)) != -1) {
-      outStream.write(buffer, 0, read_bytes);
+      for (OutputStream outStream : outStreams) {
+        outStream.write(buffer, 0, read_bytes);
+      }
     }
   }
 }

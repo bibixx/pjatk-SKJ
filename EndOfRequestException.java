@@ -1,0 +1,1 @@
+class EndOfRequestException extends Exception {}

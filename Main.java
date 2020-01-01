@@ -8,7 +8,7 @@ public class Main {
       System.out.println("Starting proxy for on port " + localport);
       runServer(localport);
     } catch (Exception e) {
-      System.err.println(e);
+      e.printStackTrace();
       System.err.println("Usage: java SimpleProxyServer " +
                          "<host> <remoteport> <localport>");
     }

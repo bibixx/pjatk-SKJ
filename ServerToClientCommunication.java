@@ -26,8 +26,9 @@ public class ServerToClientCommunication extends Thread {
     this.onServerClientCommunicationEnd = onServerClientCommunicationEnd;
   }
 
-  private void pipeHttpResponse() throws IOException {
+  private void pipeHttpResponse() throws IOException, EndOfRequestException {
     ResponseLineParser responseLineParser = new ResponseLineParser(inFromServer);
+    System.out.println(responseLineParser.getRawRequestLine());
 
     HeadersParser headersParser = new HeadersParser(inFromServer);
     int contentLength;
@@ -70,6 +71,8 @@ public class ServerToClientCommunication extends Thread {
         this.pipeHttpResponse();
       }
     } catch(IOException e) {
+
+    } catch(EndOfRequestException e) {
 
     } catch(Exception e) {
       // TODO java.lang.ArrayIndexOutOfBoundsException: Index 1 out of bounds for length 1

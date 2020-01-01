@@ -10,10 +10,15 @@ public class ResponseLineParser {
 
   private String status;
 
-  public ResponseLineParser(InputStream inputStream) throws IOException {
-    String requestLine = "";
+
+  public ResponseLineParser(InputStream inputStream) throws IOException, EndOfRequestException {
+    String requestLine = null;
     int b;
     while ((b = inputStream.read()) != -1) {
+      if (requestLine == null) {
+        requestLine = "";
+      }
+
       requestLine += (char)b;
 
       if (requestLine.endsWith("\r\n")) {
@@ -21,26 +26,23 @@ public class ResponseLineParser {
       }
     }
 
-    requestLine = requestLine.trim();
+    if (requestLine == null) {
+      throw new EndOfRequestException();
+    }
 
-    // System.out.println("! " + requestLine);
-    // TODO
-    // ! HTTP/1.1 200 OK
-    // ! HTTP/1.1 206 Partial Content
-    // ! HTTP/1.1 206 Partial Content
-    // ! HTTP/1.1 304 Not Modified
-    // ! TTP/1.1 304 Not Modified
-    // ! TTP/1.1 206 Partial Content
-    // ! HTTP/1.1 206 Partial Content
-    // ! HTTP/1.1 206 Partial Content
-    // ! HTTP/1.1 206 Partial Content
+    requestLine = requestLine.trim();
 
     String[] statusLineParts = requestLine.split(" ");
     this.rawResponseLine = requestLine;
 
     this.httpVersion = statusLineParts[0];
     this.statusCode = Integer.parseInt(statusLineParts[1]);
-    this.status = statusLineParts[2];
+
+    if (statusLineParts.length > 2) {
+      this.status = statusLineParts[2];
+    } else {
+      this.status = "";
+    }
   }
 
   public String getRawRequestLine() {
