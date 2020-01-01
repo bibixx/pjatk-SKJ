@@ -26,6 +26,30 @@ public class ServerToClientCommunication extends Thread {
     this.onServerClientCommunicationEnd = onServerClientCommunicationEnd;
   }
 
+  private void pipeHttpResponse() throws IOException {
+    ResponseLineParser responseLineParser = new ResponseLineParser(inFromServer);
+
+    HeadersParser headersParser = new HeadersParser(inFromServer);
+    int contentLength = Integer.parseInt(headersParser.getHeaders().get("Content-Length"));
+    System.out.println(contentLength);
+
+    outToClient.write(responseLineParser.getRawRequestLine().getBytes());
+    outToClient.write(headersParser.getRawHeaders().getBytes());
+
+    int read;
+    int bytesRead = 0;
+    while ((read = inFromServer.read()) != -1) {
+      System.out.print((char)read);
+      outToClient.write(read);
+
+      if (++bytesRead >= contentLength) {
+        break;
+      }
+    }
+
+    this.pipeHttpResponse();
+  }
+
   public void run() {
     try {
       if (requestLineParser.getIsHttps()) {
@@ -35,19 +59,11 @@ public class ServerToClientCommunication extends Thread {
         ).getBytes());
         outToClient.write(("Proxy-agent: Simple/0.1\r\n").getBytes());
         outToClient.write(("\r\n").getBytes());
+
+        new DataPipe(inFromServer, outToClient);
       } else {
-        ResponseLineParser responseLineParser = new ResponseLineParser(inFromServer);
-
-        HeadersParser headersParser = new HeadersParser(inFromServer);
-        if (requestLineParser.getHost().equals("proxy.com")) {
-          System.out.println(headersParser.getHeaders().get("Content-Type"));
-        }
-
-        outToClient.write(responseLineParser.getRawRequestLine().getBytes());
-        outToClient.write(headersParser.getRawHeaders().getBytes());
+        this.pipeHttpResponse();
       }
-
-      new DataPipe(inFromServer, outToClient);
     } catch(IOException e) {}
 
     try {
