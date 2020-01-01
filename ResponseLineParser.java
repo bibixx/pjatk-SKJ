@@ -22,6 +22,19 @@ public class ResponseLineParser {
     }
 
     requestLine = requestLine.trim();
+
+    // System.out.println("! " + requestLine);
+    // TODO
+    // ! HTTP/1.1 200 OK
+    // ! HTTP/1.1 206 Partial Content
+    // ! HTTP/1.1 206 Partial Content
+    // ! HTTP/1.1 304 Not Modified
+    // ! TTP/1.1 304 Not Modified
+    // ! TTP/1.1 206 Partial Content
+    // ! HTTP/1.1 206 Partial Content
+    // ! HTTP/1.1 206 Partial Content
+    // ! HTTP/1.1 206 Partial Content
+
     String[] statusLineParts = requestLine.split(" ");
     this.rawResponseLine = requestLine;
 

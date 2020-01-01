@@ -3,8 +3,6 @@ import java.io.InputStream;
 import java.util.HashMap;
 
 public class HeadersParser {
-  private String rawHeaders;
-
   private HashMap<String, String> headers;
 
   public HeadersParser(InputStream inputStream) throws IOException {
@@ -30,12 +28,19 @@ public class HeadersParser {
 
       this.headers.put(headerName, headerValue);
     }
-
-    this.rawHeaders = rawHeaders;
   }
 
-  public String getRawHeaders() {
-    return this.rawHeaders;
+  public String getAllHeadersAsText() {
+    StringBuilder sb = new StringBuilder();
+
+    for (HashMap.Entry<String, String> header : this.headers.entrySet()) {
+      String headerName = header.getKey();
+      String headerValue = header.getValue();
+
+      sb.append(headerName + ": " + headerValue + "\r\n");
+    }
+
+    return sb.toString();
   }
 
   public HashMap<String, String> getHeaders() {

@@ -30,16 +30,22 @@ public class ServerToClientCommunication extends Thread {
     ResponseLineParser responseLineParser = new ResponseLineParser(inFromServer);
 
     HeadersParser headersParser = new HeadersParser(inFromServer);
-    int contentLength = Integer.parseInt(headersParser.getHeaders().get("Content-Length"));
-    System.out.println(contentLength);
+    int contentLength;
+
+    try {
+      contentLength = Integer.parseInt(headersParser.getHeaders().get("Content-Length"));
+    } catch (NumberFormatException e) {
+      contentLength = 0;
+    }
 
     outToClient.write(responseLineParser.getRawRequestLine().getBytes());
-    outToClient.write(headersParser.getRawHeaders().getBytes());
+    outToClient.write("\r\n".getBytes());
+    outToClient.write(headersParser.getAllHeadersAsText().getBytes());
+    outToClient.write("\r\n".getBytes());
 
     int read;
     int bytesRead = 0;
     while ((read = inFromServer.read()) != -1) {
-      System.out.print((char)read);
       outToClient.write(read);
 
       if (++bytesRead >= contentLength) {
@@ -53,18 +59,22 @@ public class ServerToClientCommunication extends Thread {
   public void run() {
     try {
       if (requestLineParser.getIsHttps()) {
-        outToClient.write((
-          requestLineParser.getHttpVersion()
-            + " 200 Connection established\r\n"
-        ).getBytes());
-        outToClient.write(("Proxy-agent: Simple/0.1\r\n").getBytes());
-        outToClient.write(("\r\n").getBytes());
+        outToClient.write(
+          ProxyResponse.getSuccessResponse(
+            requestLineParser.getHttpVersion()
+          ).getBytes()
+        );
 
         new DataPipe(inFromServer, outToClient);
       } else {
         this.pipeHttpResponse();
       }
-    } catch(IOException e) {}
+    } catch(IOException e) {
+
+    } catch(Exception e) {
+      // TODO java.lang.ArrayIndexOutOfBoundsException: Index 1 out of bounds for length 1
+      e.printStackTrace();
+    }
 
     try {
       outToClient.close();

@@ -21,12 +21,11 @@ public class Connection {
       } catch (IOException e) {
         e.printStackTrace();
 
-        outToClient.write((
-          requestLineParser.getHttpVersion()
-            + " 502 Bad Gateway\r\n"
-        ).getBytes());
-        outToClient.write(("Proxy-agent: Simple/0.1\r\n").getBytes());
-        outToClient.write(("\r\n").getBytes());
+        outToClient.write(
+          ProxyResponse.getErrorResponse(
+            requestLineParser.getHttpVersion()
+          ).getBytes()
+        );
 
         outToClient.flush();
         clientSocket.close();
