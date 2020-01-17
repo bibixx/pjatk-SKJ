@@ -6,13 +6,19 @@ import java.net.*;
 public class Main {
   public static void main(String[] args) throws IOException {
     try {
-      int localport = 1337;
-      System.out.println("Starting proxy for on port " + localport);
-      runServer(localport);
+      if (args.length == 0) {
+        System.err.println("Usage: java Main " + "pathToConfigFile");
+        return;
+      }
+
+      Config.init(args[0]);
+
+      int proxyPort = Config.getProxyPort();
+      System.out.println("Starting proxy on port " + proxyPort);
+
+      runServer(proxyPort);
     } catch (Exception e) {
       e.printStackTrace();
-      System.err.println("Usage: java SimpleProxyServer " +
-                         "<host> <remoteport> <localport>");
     }
   }
 

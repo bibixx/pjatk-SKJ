@@ -83,11 +83,22 @@ public class ServerToClientCommunication extends Thread {
         writingStrategies
       );
     } else {
-      WritingStrategy[] writingStrategies = {
-        new FilterBadWordsWritingStrategy(),
-        new CachedWritingStrategy(request),
-        new RawPassthroughWritingStrategy(outToClient)
-      };
+      WritingStrategy[] writingStrategies;
+
+      if (contentType.startsWith("text")) {
+        WritingStrategy[] writingStrategiesTmp = {
+          new CachedWritingStrategy(request),
+          new RawPassthroughWritingStrategy(outToClient)
+        };
+
+        writingStrategies = writingStrategiesTmp;
+      } else {
+        WritingStrategy[] writingStrategiesTmp = {
+          new RawPassthroughWritingStrategy(outToClient)
+        };
+
+        writingStrategies = writingStrategiesTmp;
+      }
 
       readingStrategy = new ContentLengthAsyncReadingStrategy(
         inFromServer,

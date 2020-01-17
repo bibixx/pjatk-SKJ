@@ -1,6 +1,7 @@
 package src;
 
 import java.net.Socket;
+import java.net.UnknownHostException;
 import java.io.*;
 
 public class Connection {
@@ -20,6 +21,7 @@ public class Connection {
           requestLineParser.getHost(),
           requestLineParser.getPort()
         );
+      } catch (UnknownHostException e) {
       } catch (IOException e) {
         e.printStackTrace();
 

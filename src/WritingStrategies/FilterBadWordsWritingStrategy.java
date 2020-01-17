@@ -6,14 +6,19 @@ import java.nio.charset.StandardCharsets;
 import src.HeadersParser;
 import src.ResponseLineParser;
 import src.Tuple;
+import src.Config;
 
 public class FilterBadWordsWritingStrategy implements WritingStrategy {
   public byte[] highlightWords(byte[] data) {
     String dataAsString = new String(data, StandardCharsets.UTF_8);
+    String[] filteredWords = Config.getFilteredWords();
 
-    String fixedString = dataAsString.replace(
-      "bomba", "<span style=\"color: red; font-weight: bold;\">bomba</span>"
-    );
+    String fixedString = dataAsString;
+    for (String filteredWord : filteredWords) {
+      fixedString = fixedString.replace(
+        filteredWord, "<span style=\"color: red; font-weight: bold;\">" + filteredWord + "</span>"
+      );
+    }
 
     return fixedString.getBytes(StandardCharsets.UTF_8);
   }
