@@ -16,7 +16,7 @@ public class FilterBadWordsWritingStrategy implements WritingStrategy {
     String fixedString = dataAsString;
     for (String filteredWord : filteredWords) {
       fixedString = fixedString.replace(
-        filteredWord, "<span style=\"color: red; font-weight: bold;\">" + filteredWord + "</span>"
+        filteredWord, "<span style=\"color: red; font-weight: bold;background: yellow;\">" + filteredWord + "</span>"
       );
     }
 
