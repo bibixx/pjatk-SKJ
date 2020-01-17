@@ -2,18 +2,18 @@ package src.ReadingStrategies;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 
 import src.HeadersParser;
 import src.ResponseLineParser;
 import src.WritingStrategies.WritingStrategy;
 
-public class ContentLengthReadingStrategy implements ReadingStrategy {
-  private WritingStrategy[] writingStrategies;
+public class ContentLengthSyncReadingStrategy extends ReadingStrategy {
   private InputStream inFromServer;
   private HeadersParser headersParser;
   private ResponseLineParser responseLineParser;
 
-  public ContentLengthReadingStrategy(
+  public ContentLengthSyncReadingStrategy(
       InputStream inFromServer,
       HeadersParser headersParser,
       ResponseLineParser responseLineParser,
@@ -23,20 +23,6 @@ public class ContentLengthReadingStrategy implements ReadingStrategy {
     this.inFromServer = inFromServer;
     this.headersParser = headersParser;
     this.responseLineParser = responseLineParser;
-  }
-
-  private void write(byte[] data) throws IOException {
-    byte[] lastOutput = data;
-    for (WritingStrategy ws : this.writingStrategies) {
-      lastOutput = ws.write(lastOutput);
-    }
-  }
-
-  private void writeHeaders(byte[] data) throws IOException {
-    byte[] lastOutput = data;
-    for (WritingStrategy ws : this.writingStrategies) {
-      lastOutput = ws.writeHeaders(lastOutput);
-    }
   }
 
   public void read() throws IOException {
@@ -53,6 +39,8 @@ public class ContentLengthReadingStrategy implements ReadingStrategy {
     this.writeHeaders(headersParser.getAllHeadersAsText().getBytes());
     this.writeHeaders("\r\n".getBytes());
 
+    String s = "";
+
     byte[] read = new byte[1024];
     int bytesRead = 0;
     while ((bytesRead = inFromServer.read(
@@ -63,11 +51,13 @@ public class ContentLengthReadingStrategy implements ReadingStrategy {
         read.length
       )
     )) != -1) {
-      this.write(read);
+      s += new String(read, StandardCharsets.UTF_8);
 
       if (bytesRead >= contentLength) {
         break;
       }
     }
+
+    this.write(s.getBytes(StandardCharsets.UTF_8));
   };
 }

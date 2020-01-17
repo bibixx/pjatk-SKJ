@@ -5,7 +5,9 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.SocketException;
 
-import src.ReadingStrategies.ContentLengthReadingStrategy;
+import src.ReadingStrategies.ContentLengthAsyncReadingStrategy;
+import src.ReadingStrategies.ContentLengthSyncReadingStrategy;
+import src.ReadingStrategies.ReadingStrategy;
 import src.WritingStrategies.CachedWritingStrategy;
 import src.WritingStrategies.RawPassthroughWritingStrategy;
 import src.WritingStrategies.WritingStrategy;
@@ -51,7 +53,7 @@ public class ServerToClientCommunication extends Thread {
       new RawPassthroughWritingStrategy(outToClient)
     };
 
-    ContentLengthReadingStrategy readingStrategy = new ContentLengthReadingStrategy(
+    ReadingStrategy readingStrategy = new ContentLengthAsyncReadingStrategy(
       inFromServer,
       headersParser,
       responseLineParser,
