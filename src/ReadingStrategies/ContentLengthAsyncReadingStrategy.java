@@ -5,6 +5,7 @@ import java.io.InputStream;
 
 import src.HeadersParser;
 import src.ResponseLineParser;
+import src.Tuple;
 import src.WritingStrategies.WritingStrategy;
 
 public class ContentLengthAsyncReadingStrategy extends ReadingStrategy {
@@ -33,10 +34,7 @@ public class ContentLengthAsyncReadingStrategy extends ReadingStrategy {
       contentLength = 0;
     }
 
-    this.writeHeaders(responseLineParser.getRawRequestLine().getBytes());
-    this.writeHeaders("\r\n".getBytes());
-    this.writeHeaders(headersParser.getAllHeadersAsText().getBytes());
-    this.writeHeaders("\r\n".getBytes());
+    this.writeHeaders(new Tuple<HeadersParser,ResponseLineParser>(headersParser, responseLineParser));
 
     byte[] read = new byte[1024];
     int bytesRead = 0;

@@ -6,6 +6,7 @@ import java.nio.charset.StandardCharsets;
 
 import src.HeadersParser;
 import src.ResponseLineParser;
+import src.Tuple;
 import src.WritingStrategies.WritingStrategy;
 
 public class ContentLengthSyncReadingStrategy extends ReadingStrategy {
@@ -34,11 +35,6 @@ public class ContentLengthSyncReadingStrategy extends ReadingStrategy {
       contentLength = 0;
     }
 
-    this.writeHeaders(responseLineParser.getRawRequestLine().getBytes());
-    this.writeHeaders("\r\n".getBytes());
-    this.writeHeaders(headersParser.getAllHeadersAsText().getBytes());
-    this.writeHeaders("\r\n".getBytes());
-
     String s = "";
 
     byte[] read = new byte[1024];
@@ -58,6 +54,7 @@ public class ContentLengthSyncReadingStrategy extends ReadingStrategy {
       }
     }
 
+    this.writeHeaders(new Tuple<HeadersParser,ResponseLineParser>(headersParser, responseLineParser));
     this.write(s.getBytes(StandardCharsets.UTF_8));
   };
 }

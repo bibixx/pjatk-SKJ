@@ -5,7 +5,10 @@ import java.io.FileOutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+import src.HeadersParser;
 import src.RequestLineParser;
+import src.ResponseLineParser;
+import src.Tuple;
 
 public class CachedWritingStrategy implements WritingStrategy {
   private FileOutputStream cacheFile;
@@ -25,10 +28,17 @@ public class CachedWritingStrategy implements WritingStrategy {
     this.cacheFile = new FileOutputStream(cacheFilePath.toAbsolutePath().toString());
   }
 
-  @Override
-  public byte[] writeHeaders(byte[] data) throws IOException {
-    this.cacheFile.write(data);
-    return data;
+  public Tuple<HeadersParser, ResponseLineParser>
+    writeHeaders(Tuple<HeadersParser, ResponseLineParser> input) throws IOException {
+    HeadersParser headersParser = input.x;
+    ResponseLineParser responseLineParser = input.y;
+
+    this.cacheFile.write(responseLineParser.getRawRequestLine().getBytes());
+    this.cacheFile.write("\r\n".getBytes());
+    this.cacheFile.write(headersParser.getAllHeadersAsText().getBytes());
+    this.cacheFile.write("\r\n".getBytes());
+
+    return input;
   }
 
   @Override
