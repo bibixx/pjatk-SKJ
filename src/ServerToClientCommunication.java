@@ -85,7 +85,7 @@ public class ServerToClientCommunication extends Thread {
     } else {
       WritingStrategy[] writingStrategies;
 
-      if (contentType.startsWith("text")) {
+      if (contentType != null && contentType.startsWith("text")) {
         WritingStrategy[] writingStrategiesTmp = {
           new CachedWritingStrategy(request),
           new RawPassthroughWritingStrategy(outToClient)
