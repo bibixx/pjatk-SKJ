@@ -28,7 +28,9 @@ public class HeadersParser {
       String headerName = headerParts[0];
       String headerValue = headerParts[1];
 
-      this.headers.put(headerName, headerValue);
+      if (!headerName.equals("Accept-Encoding")) {
+        this.headers.put(headerName, headerValue);
+      }
     }
   }
 
