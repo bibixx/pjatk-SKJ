@@ -1,3 +1,5 @@
+package src;
+
 public class ProxyResponse {
   static final String PROXY_AGENT = "Simple/0.1";
 
