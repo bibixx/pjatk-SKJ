@@ -54,7 +54,12 @@ public class ContentLengthSyncReadingStrategy extends ReadingStrategy {
       }
     }
 
-    this.writeHeaders(new Tuple<HeadersParser,ResponseLineParser>(headersParser, responseLineParser));
-    this.write(s.getBytes(StandardCharsets.UTF_8));
+    byte[] data = s.getBytes(StandardCharsets.UTF_8);
+
+    System.out.println(headersParser);
+    System.out.println(responseLineParser);
+    System.out.println(data);
+    this.writeHeaders(new Tuple<HeadersParser,ResponseLineParser, byte[]>(headersParser, responseLineParser, data));
+    this.write(data);
   };
 }

@@ -16,7 +16,10 @@ public class RawPassthroughWritingStrategy implements WritingStrategy {
     this.outToClient = outToClient;
   }
 
-  public Tuple<HeadersParser, ResponseLineParser> writeHeaders(Tuple<HeadersParser, ResponseLineParser> input) throws IOException {
+  public Tuple<HeadersParser, ResponseLineParser, byte[]>
+    writeHeaders(
+      Tuple<HeadersParser, ResponseLineParser, byte[]> input
+    ) throws IOException {
     HeadersParser headersParser = input.x;
     ResponseLineParser responseLineParser = input.y;
 

@@ -18,8 +18,10 @@ abstract public class ReadingStrategy {
     }
   }
 
-  protected void writeHeaders(Tuple<HeadersParser, ResponseLineParser> data) throws IOException {
-    Tuple<HeadersParser, ResponseLineParser> lastOutput = data;
+  protected void writeHeaders(
+    Tuple<HeadersParser, ResponseLineParser, byte[]> data
+  ) throws IOException {
+    Tuple<HeadersParser, ResponseLineParser, byte[]> lastOutput = data;
     for (WritingStrategy ws : this.writingStrategies) {
       lastOutput = ws.writeHeaders(lastOutput);
     }

@@ -1,5 +1,6 @@
 #!/bin/bash
 rm ./**/*.class
+rm -rf ./cache/*
 
 className="src/Main"
 

@@ -8,6 +8,7 @@ import java.net.SocketException;
 import src.ReadingStrategies.ContentLengthAsyncReadingStrategy;
 import src.ReadingStrategies.ContentLengthSyncReadingStrategy;
 import src.ReadingStrategies.ReadingStrategy;
+import src.WritingStrategies.FilterBadWordsWritingStrategy;
 import src.WritingStrategies.CachedWritingStrategy;
 import src.WritingStrategies.RawPassthroughWritingStrategy;
 import src.WritingStrategies.WritingStrategy;
@@ -48,17 +49,37 @@ public class ServerToClientCommunication extends Thread {
 
     HeadersParser headersParser = new HeadersParser(inFromServer);
 
-    WritingStrategy[] writingStrategies = {
-      new CachedWritingStrategy(request),
-      new RawPassthroughWritingStrategy(outToClient)
-    };
+    String contentType = headersParser.getHeaders().get("Content-Type");
 
-    ReadingStrategy readingStrategy = new ContentLengthAsyncReadingStrategy(
-      inFromServer,
-      headersParser,
-      responseLineParser,
-      writingStrategies
-    );
+    ReadingStrategy readingStrategy;
+
+    if (contentType != null && contentType.startsWith("text/html")) {
+      WritingStrategy[] writingStrategies = {
+        new FilterBadWordsWritingStrategy(),
+        new CachedWritingStrategy(request),
+        new RawPassthroughWritingStrategy(outToClient)
+      };
+
+      readingStrategy = new ContentLengthSyncReadingStrategy(
+        inFromServer,
+        headersParser,
+        responseLineParser,
+        writingStrategies
+      );
+    } else {
+      WritingStrategy[] writingStrategies = {
+        new FilterBadWordsWritingStrategy(),
+        new CachedWritingStrategy(request),
+        new RawPassthroughWritingStrategy(outToClient)
+      };
+
+      readingStrategy = new ContentLengthAsyncReadingStrategy(
+        inFromServer,
+        headersParser,
+        responseLineParser,
+        writingStrategies
+      );
+    }
 
     readingStrategy.read();
 

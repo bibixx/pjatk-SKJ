@@ -34,7 +34,10 @@ public class ContentLengthAsyncReadingStrategy extends ReadingStrategy {
       contentLength = 0;
     }
 
-    this.writeHeaders(new Tuple<HeadersParser,ResponseLineParser>(headersParser, responseLineParser));
+    this.writeHeaders(
+      new Tuple<HeadersParser,ResponseLineParser, byte[]>
+        (headersParser, responseLineParser, new byte[0])
+    );
 
     byte[] read = new byte[1024];
     int bytesRead = 0;

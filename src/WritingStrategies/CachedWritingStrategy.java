@@ -28,8 +28,10 @@ public class CachedWritingStrategy implements WritingStrategy {
     this.cacheFile = new FileOutputStream(cacheFilePath.toAbsolutePath().toString());
   }
 
-  public Tuple<HeadersParser, ResponseLineParser>
-    writeHeaders(Tuple<HeadersParser, ResponseLineParser> input) throws IOException {
+  public Tuple<HeadersParser, ResponseLineParser, byte[]>
+    writeHeaders(
+      Tuple<HeadersParser, ResponseLineParser, byte[]> input
+    ) throws IOException {
     HeadersParser headersParser = input.x;
     ResponseLineParser responseLineParser = input.y;
 
