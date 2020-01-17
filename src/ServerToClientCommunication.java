@@ -5,6 +5,11 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.SocketException;
 
+import src.ReadingStrategies.ContentLengthReadingStrategy;
+import src.WritingStrategies.CachedWritingStrategy;
+import src.WritingStrategies.RawPassthroughWritingStrategy;
+import src.WritingStrategies.WritingStrategy;
+
 /**
  * ClientToServerCommunication
  */
@@ -41,16 +46,19 @@ public class ServerToClientCommunication extends Thread {
 
     HeadersParser headersParser = new HeadersParser(inFromServer);
 
-    ResponseParsingStrategy strat = new RPFullPipeCachedStrategy(
-    // ResponseParsingStrategy strat = new RPFullPipeStrategy(
-      responseLineParser,
-      request,
-      headersParser,
+    WritingStrategy[] writingStrategies = {
+      new CachedWritingStrategy(request),
+      new RawPassthroughWritingStrategy(outToClient)
+    };
+
+    ContentLengthReadingStrategy readingStrategy = new ContentLengthReadingStrategy(
       inFromServer,
-      outToClient
+      headersParser,
+      responseLineParser,
+      writingStrategies
     );
 
-    strat.run();
+    readingStrategy.read();
 
     this.pipeHttpResponse();
   }
