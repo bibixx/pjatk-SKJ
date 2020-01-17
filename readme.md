@@ -1,15 +1,13 @@
 # SKJ Proxy – Bartosz Legięć (s19129)
 
 ## Zaimplementowane funkcje
-[x] proxy może działać w wersji LIGHT, tzn. przesyła tylko same teksty bez żadnych dodatkowych elementów (2 pkt.);
+- [x] proxy może działać w wersji LIGHT, tzn. przesyła tylko same teksty bez żadnych dodatkowych elementów (2 pkt.);
+- [x] proxy może działać w wersji HEAVY, tzn. serwer przesyła dokładnie wszystkie dane - domyślne działanie  (4 pkt.);
+- [x] implementacja wielu równoległych połączeń - serwer powinien działać wielowątkowo (2 pkt.).
+- [x] filtrowanie: jeżeli na przesyłanej stronie znajdują się wybrane niebezpieczne słowa (odczytane z pliku przy starcie serwera), to powinny być one wyróżnione (np.: czerwony text i żółte tło)  (3 pkt.);
+- [x] "cache-owanie" stron na dysku na którym działa serwer proxy - jeżeli serwer jest proszony raz jeszcze o tę stronę to przesyła stronę ze swojego dysku (4 pkt.) - Strona tak powinna być odpowiednio oznaczona, że pochodzi z cacha - oznaczenie pozostawiam inwencji osób piszących;
 
-[x] proxy może działać w wersji HEAVY, tzn. serwer przesyła dokładnie wszystkie dane - domyślne działanie  (4 pkt.);
-
-[x] implementacja wielu równoległych połączeń - serwer powinien działać wielowątkowo (2 pkt.).
-
-[x] filtrowanie: jeżeli na przesyłanej stronie znajdują się wybrane niebezpieczne słowa (odczytane z pliku przy starcie serwera), to powinny być one wyróżnione (np.: czerwony text i żółte tło)  (3 pkt.);
-
-[x] "cache-owanie" stron na dysku na którym działa serwer proxy - jeżeli serwer jest proszony raz jeszcze o tę stronę to przesyła stronę ze swojego dysku (4 pkt.) - Strona tak powinna być odpowiednio oznaczona, że pochodzi z cacha - oznaczenie pozostawiam inwencji osób piszących;
+Ad. cache'owania – plik z cache'a ozanczony jest nagłówkiem w responsie `X-Cached-By: s19129 Proxy`
 
 ## Niezaimplementowane funkcje / znane problemy
 * Brak wsparcia dla `Transfer-Encoding: chunked`
