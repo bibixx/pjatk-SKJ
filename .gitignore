@@ -1,3 +1,2 @@
 *.class
-cache/*
-!cache/.gitkeep
+cache
