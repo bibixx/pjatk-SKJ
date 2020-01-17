@@ -5,6 +5,7 @@ import java.io.FileOutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+import src.CacheUtils;
 import src.HeadersParser;
 import src.RequestLineParser;
 import src.ResponseLineParser;
@@ -16,12 +17,7 @@ public class CachedWritingStrategy implements WritingStrategy {
   public CachedWritingStrategy(
     RequestLineParser request
   ) throws IOException {
-    Path cacheFilePath = Path.of(
-      "cache",
-      request.getHost(),
-      Integer.toString(request.getPort()),
-      (request.getPath().equals("/") ? "/index" : request.getPath())
-    );
+    Path cacheFilePath = CacheUtils.getCacheUrl(request);
 
     Files.createDirectories(cacheFilePath.getParent());
 
@@ -37,7 +33,11 @@ public class CachedWritingStrategy implements WritingStrategy {
 
     this.cacheFile.write(responseLineParser.getRawRequestLine().getBytes());
     this.cacheFile.write("\r\n".getBytes());
+
     this.cacheFile.write(headersParser.getAllHeadersAsText().getBytes());
+
+    this.cacheFile.write("X-Cached-By: s19129 Proxy\r\n".getBytes());
+
     this.cacheFile.write("\r\n".getBytes());
 
     return input;

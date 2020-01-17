@@ -4,7 +4,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.SocketException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
+import src.ReadingStrategies.CacheReadingStrategy;
 import src.ReadingStrategies.ContentLengthAsyncReadingStrategy;
 import src.ReadingStrategies.ContentLengthSyncReadingStrategy;
 import src.ReadingStrategies.ReadingStrategy;
@@ -53,7 +56,20 @@ public class ServerToClientCommunication extends Thread {
 
     ReadingStrategy readingStrategy;
 
-    if (contentType != null && contentType.startsWith("text/html")) {
+    Path cacheFilePath = CacheUtils.getCacheUrl(request);
+
+    boolean fileInCache = Files.exists(cacheFilePath);
+
+    if (fileInCache) {
+      WritingStrategy[] writingStrategies = {
+        new RawPassthroughWritingStrategy(outToClient)
+      };
+
+      readingStrategy = new CacheReadingStrategy(
+        cacheFilePath,
+        writingStrategies
+      );
+    } else if (contentType != null && contentType.startsWith("text/html")) {
       WritingStrategy[] writingStrategies = {
         new FilterBadWordsWritingStrategy(),
         new CachedWritingStrategy(request),

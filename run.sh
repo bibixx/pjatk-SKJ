@@ -1,10 +1,6 @@
 #!/bin/bash
-rm ./**/*.class
-rm -rf ./cache/*
-
-className="src/Main"
-
-javac $className.java
-echo "==== COMPILED ===="
-# java -Xss2g $className
-java $className
+rm -rf ./**/*.class &&
+  rm -rf ./cache/* &&
+  javac src/Main.java &&
+  echo "==== COMPILED ====" &&
+  java src/Main
