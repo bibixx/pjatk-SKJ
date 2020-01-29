@@ -1,4 +1,4 @@
-# SKJ Proxy – Bartosz Legięć
+# HTTP(S) Proxy
 
 ## Zaimplementowane funkcje
 - [x] proxy może działać w wersji LIGHT, tzn. przesyła tylko same teksty bez żadnych dodatkowych elementów (2 pkt.);
