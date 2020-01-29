@@ -1,4 +1,4 @@
-# SKJ Proxy – Bartosz Legięć (s19129)
+# SKJ Proxy – Bartosz Legięć
 
 ## Zaimplementowane funkcje
 - [x] proxy może działać w wersji LIGHT, tzn. przesyła tylko same teksty bez żadnych dodatkowych elementów (2 pkt.);
